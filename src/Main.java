@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.temporal.Temporal;
 
 public class Main {
     public static void main(String[]args){
@@ -15,13 +16,16 @@ public class Main {
 
 
 class memon {
-    public static JButton s_b,searchBtn,updateBtn,deleteBtn;
+    public static JButton s_b,searchBtn,updateBtn,deleteBtn,resetBtn;
     public static JFrame frame;
     public static JLabel l, l_1, l_2, l_3, l_4, l_5, l_6;
     public static JTextField f1, f2, f3, f4, f5,f6;
+    public static EmployeeDAO employeeDAO;
+
     //public static JCheckBox box;
 
     public static void page_2(){
+        employeeDAO = new EmployeeDAO();
         l = new JLabel("Insert Employee ID: ");
         l.setBounds(20, 0, 700, 200);
         l.setFont(new Font("MV Boli", Font.BOLD, 20));
@@ -44,12 +48,17 @@ class memon {
         deleteBtn.setBounds(400, 440, 120, 50);
         deleteBtn.setFocusable(false);
 
+        resetBtn = new JButton("RESET");
+        resetBtn.setFont(new Font("MV Boli",Font.BOLD,20));
+        resetBtn.setBounds(550, 440, 120, 50);
+        resetBtn.setFocusable(false);
+
+
 
         searchBtn = new JButton("Search");
         searchBtn.setFont(new Font("MV Boli",Font.BOLD,15));
         searchBtn.setBounds(320, 5, 120, 25);
         searchBtn.setFocusable(false);
-
 
 
         f1 = new JTextField();
@@ -102,6 +111,7 @@ class memon {
         frame.add(f5);
         frame.add(l);
         frame.add(s_b);
+        frame.add(resetBtn);
         frame.add(searchBtn);
         frame.add(updateBtn);
         frame.add(deleteBtn);
@@ -114,6 +124,47 @@ class memon {
         frame.getContentPane().setBackground(new Color(220, 220, 220));
         frame.setLocation(300, 60);
         frame.setVisible(true);
+
+        s_b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              employeeDAO.addEmployeeToDB(new Employee(Integer.parseInt(f5.getText()),Integer.parseInt(f3.getText()),f2.getText(),f4.getText()));
+            }
+        });
+
+
+        resetBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                f1.setText("");
+                f2.setText("");
+                f3.setText("");
+                f4.setText("");
+                f5.setText("");
+                f6.setText("");
+            }
+        });
+
+        deleteBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                employeeDAO.deleteEmployee(Integer.parseInt(f6.getText()));
+            }
+        });
+
+
+        searchBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Employee employee = employeeDAO.getEmployeeById(Integer.parseInt(f6.getText()));
+                f1.setText(String.valueOf(employee.getId()));
+                f2.setText(employee.getName());
+                f3.setText(String.valueOf(employee.getAge()));
+                f4.setText(employee.getDepartment());
+                f5.setText(String.valueOf(employee.getSalary()));
+            }
+        });
+
 
     }
 

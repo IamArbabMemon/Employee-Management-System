@@ -46,7 +46,7 @@ public void addEmployeeToDB(Employee employee){
            query.setString(3,employee.getDepartment());
            query.setInt(4,employee.getSalary());
            query.executeUpdate();
-
+           System.out.println("Employee has been added to the database");
        }catch (Exception e){
            System.out.println("Error Occurred in inserting employee into the database !! + "+e);
        }
@@ -60,6 +60,7 @@ public void deleteEmployee(int id){
         query = connection.prepareStatement("DELETE FROM Employee WHERE ID = ?");
         query.setInt(1,id);
         query.executeUpdate();
+        System.out.println("Employee has been deleted");
        }catch(Exception e){
            System.out.println("Error Occurred while deleting the employee : "+e);
        }
@@ -76,12 +77,28 @@ public void updateEmployee(int id ,Employee employee){
         query.setInt(4,employee.getSalary());
         query.setInt(5,id);
         query.executeUpdate();
-
+        System.out.println("Employee record has been updated");
     }catch (Exception e){
         System.out.println("Error Occurred in inserting employee into the database !! + "+e);
     }
 }
 
+
+public Employee getEmployeeById(int id){
+    Employee employee = null;
+       try{
+        query = connection.prepareStatement("SELECT * FROM Employee WHERE ID = ?");
+        query.setInt(1,id);
+        resultSet = query.executeQuery();
+        resultSet.next();
+        employee = new Employee(resultSet.getInt(1), resultSet.getInt(5),resultSet.getInt(3),resultSet.getString(2), resultSet.getString(4));
+           //int id , int salary, int age, String name , String department
+    }catch(Exception e){
+        System.out.println("Error occurred in getting the employee from database "+e);
+    }
+
+    return employee;
+}
 
 
 }
