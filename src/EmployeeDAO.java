@@ -92,7 +92,7 @@ public Employee getEmployeeById(int id){
         resultSet = query.executeQuery();
         resultSet.next();
         employee = new Employee(resultSet.getInt(1), resultSet.getInt(5),resultSet.getInt(3),resultSet.getString(2), resultSet.getString(4));
-           //int id , int salary, int age, String name , String department
+
     }catch(Exception e){
         System.out.println("Error occurred in getting the employee from database "+e);
     }

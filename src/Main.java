@@ -4,6 +4,8 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 
@@ -106,6 +108,8 @@ public static TableModel tableModel;
         tableModel = new DefaultTableModel(getRecordObject(), fields);
         table = new JTable(tableModel);
 
+//        reflectSelectedTableRow();
+
         pane = new JScrollPane(table);
         pane.setBounds(50,500,600,300);
         frame = new JFrame("Employee Management System");
@@ -145,6 +149,7 @@ public static TableModel tableModel;
         });
 
 
+
         resetBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,6 +160,7 @@ public static TableModel tableModel;
                 f5.setText("");
                 f6.setText("");
             }
+
         });
 
         deleteBtn.addActionListener(new ActionListener() {
@@ -206,6 +212,25 @@ public static TableModel tableModel;
             }
         });
 
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(e.getClickCount()>=1){
+                    int selectedRow = table.getSelectedRow();
+                    if(selectedRow!=-1){
+                        f1.setText(table.getValueAt(selectedRow,0).toString());
+                        f2.setText(table.getValueAt(selectedRow,1).toString());
+                        f3.setText(table.getValueAt(selectedRow,2).toString());
+                        f4.setText(table.getValueAt(selectedRow,3).toString());
+                        f5.setText(table.getValueAt(selectedRow,4).toString());
+                    }
+
+                }
+
+            }
+        });
+
     }
 
 public static Object[][] getRecordObject(){
@@ -234,6 +259,12 @@ public static void updateTable(){
     pane.setBounds(50,500,600,300);
     frame.add(pane);
     frame.setVisible(true);
+
+}
+
+
+public static void reflectSelectedTableRow(){
+        int row = table.getSelectedRow();
 
 }
 
