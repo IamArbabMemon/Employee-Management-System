@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[]args){
@@ -23,7 +24,7 @@ class GUI {
     public static JTextField f1, f2, f3, f4, f5,f6;
     public static EmployeeDAO employeeDAO;
     public static JTable table;
-
+public static JScrollPane pane;
     //public static JCheckBox box;
 
     public static void startApp(){
@@ -100,11 +101,11 @@ class GUI {
         l_5.setFont(new Font("MV Boli", Font.BOLD, 20));
 
         String[] fields = {"ID","Name","Age","Department","Salary"};
-        Object[][] records = { {"1","Akbar","23","IT","15000"}, {"2","ALI HAYDER","21","Graphics","25000"} };
+        //Object[][] records = { {"1","Akbar","23","IT","15000"}, {"2","ALI HAYDER","21","Graphics","25000"} };
 
-        table = new JTable(new DefaultTableModel(records, fields));
+        table = new JTable(new DefaultTableModel(getRecordObject(), fields));
 
-        JScrollPane pane = new JScrollPane(table);
+        pane = new JScrollPane(table);
         pane.setBounds(50,500,600,300);
         frame = new JFrame("Employee Management System");
         frame.setSize(750, 900);
@@ -133,12 +134,15 @@ class GUI {
         frame.setLocation(300, 60);
         frame.setVisible(true);
 
-
         s_b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
               employeeDAO.addEmployeeToDB(new Employee(Integer.parseInt(f5.getText()),Integer.parseInt(f3.getText()),f2.getText(),f4.getText()));
                 JOptionPane.showMessageDialog(null,"EMPLOYEE HAS BEEN ADDED","INFORMATION",JOptionPane.PLAIN_MESSAGE);
+                frame.remove(pane);
+                frame.revalidate();
+                frame.repaint();
+
             }
         });
 
@@ -199,8 +203,25 @@ class GUI {
 
     }
 
+public static Object[][] getRecordObject(){
+        ArrayList<Employee> employeeArrayList = employeeDAO.getAllEmployees();
+        Object[][] records = new Object[employeeArrayList.size()][5];
 
+        for(int i =0; i<employeeArrayList.size()-1; i++){
+            records[i][0]=employeeArrayList.get(i).getId();
+            records[i][1]=employeeArrayList.get(i).getName();
+            records[i][2]=String.valueOf(employeeArrayList.get(i).getAge());
+            records[i][3]=employeeArrayList.get(i).getDepartment();
+            records[i][4]=String.valueOf(employeeArrayList.get(i).getSalary());
+        }
 
+    return records;
+}
+
+public static void updateFrame(){
+        //frame.remove(Component pane);
+
+}
 
 }
 
