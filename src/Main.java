@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +26,8 @@ class GUI {
     public static EmployeeDAO employeeDAO;
     public static JTable table;
 public static JScrollPane pane;
-    //public static JCheckBox box;
+public static TableModel tableModel;
+    public static String[] fields = {"ID","Name","Age","Department","Salary"};
 
     public static void startApp(){
         employeeDAO = new EmployeeDAO();
@@ -100,10 +102,9 @@ public static JScrollPane pane;
         l_5.setBounds(20, 320, 160, 60);
         l_5.setFont(new Font("MV Boli", Font.BOLD, 20));
 
-        String[] fields = {"ID","Name","Age","Department","Salary"};
-        //Object[][] records = { {"1","Akbar","23","IT","15000"}, {"2","ALI HAYDER","21","Graphics","25000"} };
 
-        table = new JTable(new DefaultTableModel(getRecordObject(), fields));
+        tableModel = new DefaultTableModel(getRecordObject(), fields);
+        table = new JTable(tableModel);
 
         pane = new JScrollPane(table);
         pane.setBounds(50,500,600,300);
@@ -139,10 +140,7 @@ public static JScrollPane pane;
             public void actionPerformed(ActionEvent e) {
               employeeDAO.addEmployeeToDB(new Employee(Integer.parseInt(f5.getText()),Integer.parseInt(f3.getText()),f2.getText(),f4.getText()));
                 JOptionPane.showMessageDialog(null,"EMPLOYEE HAS BEEN ADDED","INFORMATION",JOptionPane.PLAIN_MESSAGE);
-                frame.remove(pane);
-                frame.revalidate();
-                frame.repaint();
-
+                updateTable();
             }
         });
 
@@ -162,9 +160,15 @@ public static JScrollPane pane;
         deleteBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+               if(f1.getText().equals("")) {
+                   JOptionPane.showMessageDialog(null, "EMPLOYEE NOT FOUND PLEASE ENTER THE VALID ID OF EMPLOYEE", "INFORMATION", JOptionPane.ERROR_MESSAGE);
+               }else{
                 employeeDAO.deleteEmployee(Integer.parseInt(f1.getText()));
                 JOptionPane.showMessageDialog(null,"EMPLOYEE HAS BEEN DELETED","INFORMATION",JOptionPane.PLAIN_MESSAGE);
+                updateTable();
+               }
             }
+
 
         });
 
@@ -194,6 +198,7 @@ public static JScrollPane pane;
                 if(!f1.getText().equals("")) {
                     employeeDAO.updateEmployee(Integer.parseInt(f1.getText()), new Employee(Integer.parseInt(f5.getText()), Integer.parseInt(f3.getText()), f2.getText(), f4.getText()));
                     JOptionPane.showMessageDialog(null, "EMPLOYEE RECORD HAS BEEN UPDATED", "INFORMATION", JOptionPane.PLAIN_MESSAGE);
+                    updateTable();
                 }else{
                     JOptionPane.showMessageDialog(null, "PLEASE INSERT EMPLOYEE ID", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
@@ -207,7 +212,7 @@ public static Object[][] getRecordObject(){
         ArrayList<Employee> employeeArrayList = employeeDAO.getAllEmployees();
         Object[][] records = new Object[employeeArrayList.size()][5];
 
-        for(int i =0; i<employeeArrayList.size()-1; i++){
+        for(int i =0; i<employeeArrayList.size(); i++){
             records[i][0]=employeeArrayList.get(i).getId();
             records[i][1]=employeeArrayList.get(i).getName();
             records[i][2]=String.valueOf(employeeArrayList.get(i).getAge());
@@ -218,8 +223,17 @@ public static Object[][] getRecordObject(){
     return records;
 }
 
-public static void updateFrame(){
-        //frame.remove(Component pane);
+public static void updateTable(){
+    frame.remove(pane);
+    frame.revalidate();
+    frame.repaint();
+    System.out.println("hello");
+    tableModel = new DefaultTableModel(getRecordObject(),fields);
+    table = new JTable(tableModel);
+    pane = new JScrollPane(table);
+    pane.setBounds(50,500,600,300);
+    frame.add(pane);
+    frame.setVisible(true);
 
 }
 
