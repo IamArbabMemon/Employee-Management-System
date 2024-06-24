@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,7 +7,7 @@ import java.time.temporal.Temporal;
 
 public class Main {
     public static void main(String[]args){
-        memon.page_2();
+        GUI.startApp();
     }
 }
 
@@ -15,16 +16,17 @@ public class Main {
 
 
 
-class memon {
+class GUI {
     public static JButton s_b,searchBtn,updateBtn,deleteBtn,resetBtn;
     public static JFrame frame;
     public static JLabel l, l_1, l_2, l_3, l_4, l_5, l_6;
     public static JTextField f1, f2, f3, f4, f5,f6;
     public static EmployeeDAO employeeDAO;
+    public static JTable table;
 
     //public static JCheckBox box;
 
-    public static void page_2(){
+    public static void startApp(){
         employeeDAO = new EmployeeDAO();
         l = new JLabel("Insert Employee ID: ");
         l.setBounds(20, 0, 700, 200);
@@ -97,12 +99,18 @@ class memon {
         l_5.setBounds(20, 320, 160, 60);
         l_5.setFont(new Font("MV Boli", Font.BOLD, 20));
 
+        String[] fields = {"ID","Name","Age","Department","Salary"};
+        Object[][] records = { {"1","Akbar","23","IT","15000"}, {"2","ALI HAYDER","21","Graphics","25000"} };
 
+        table = new JTable(new DefaultTableModel(records, fields));
 
+        JScrollPane pane = new JScrollPane(table);
+        pane.setBounds(50,500,600,300);
         frame = new JFrame("Employee Management System");
         frame.setSize(750, 900);
         frame.setLayout(null);
         frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        frame.add(pane);
         frame.add(f1);
         frame.add(f2);
         frame.add(f6);
@@ -125,10 +133,12 @@ class memon {
         frame.setLocation(300, 60);
         frame.setVisible(true);
 
+
         s_b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
               employeeDAO.addEmployeeToDB(new Employee(Integer.parseInt(f5.getText()),Integer.parseInt(f3.getText()),f2.getText(),f4.getText()));
+                JOptionPane.showMessageDialog(null,"EMPLOYEE HAS BEEN ADDED","INFORMATION",JOptionPane.PLAIN_MESSAGE);
             }
         });
 
@@ -148,25 +158,49 @@ class memon {
         deleteBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                employeeDAO.deleteEmployee(Integer.parseInt(f6.getText()));
+                employeeDAO.deleteEmployee(Integer.parseInt(f1.getText()));
+                JOptionPane.showMessageDialog(null,"EMPLOYEE HAS BEEN DELETED","INFORMATION",JOptionPane.PLAIN_MESSAGE);
             }
+
         });
 
 
         searchBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 Employee employee = employeeDAO.getEmployeeById(Integer.parseInt(f6.getText()));
-                f1.setText(String.valueOf(employee.getId()));
-                f2.setText(employee.getName());
-                f3.setText(String.valueOf(employee.getAge()));
-                f4.setText(employee.getDepartment());
-                f5.setText(String.valueOf(employee.getSalary()));
+
+                if(employee==null) {
+                    JOptionPane.showMessageDialog(null, "EMPLOYEE NOT FOUND", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }else {
+                    f1.setText(String.valueOf(employee.getId()));
+                    f2.setText(employee.getName());
+                    f3.setText(String.valueOf(employee.getAge()));
+                    f4.setText(employee.getDepartment());
+                    f5.setText(String.valueOf(employee.getSalary()));
+                }
+            }
+
+        });
+
+        updateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!f1.getText().equals("")) {
+                    employeeDAO.updateEmployee(Integer.parseInt(f1.getText()), new Employee(Integer.parseInt(f5.getText()), Integer.parseInt(f3.getText()), f2.getText(), f4.getText()));
+                    JOptionPane.showMessageDialog(null, "EMPLOYEE RECORD HAS BEEN UPDATED", "INFORMATION", JOptionPane.PLAIN_MESSAGE);
+                }else{
+                    JOptionPane.showMessageDialog(null, "PLEASE INSERT EMPLOYEE ID", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+
             }
         });
 
-
     }
+
+
+
 
 }
 
